@@ -3,6 +3,10 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express(); 
+
+// Serve static files (index.html, CSS, JS) from the 'public' directory
+app.use(express.static(path.join(__dirname, 'public')));
+
 const PORT = process.env.PORT || 3000; // Use the environment variable for Heroku or port 3000 for local development
 
 app.listen(PORT, () => {

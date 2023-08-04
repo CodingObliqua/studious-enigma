@@ -40,6 +40,15 @@ const saveNote = (note) =>
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(note),
+  })
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error('Failed to save note.');
+    }
+    return response.json(); // Parse the JSON response from the server 
+  })
+  .catch((error) => {
+    console.error(error); // Handle error, show error message, etc.
   });
 
 const deleteNote = (id) =>
@@ -48,6 +57,16 @@ const deleteNote = (id) =>
     headers: {
       'Content-Type': 'application/json',
     },
+  })
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error ('Failed to delete note.');
+    }
+    return response.json(); // Parse the JSON response from the server (if necessary) 
+  })
+  .catch((error) => {
+    console.error(error);
+    // Handle error, show error message, etc.
   });
 
 const renderActiveNote = () => {
