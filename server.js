@@ -1,83 +1,54 @@
 const express = require('express');
-const fs = require('fs');
 const path = require('path');
+const uuid = require('./helpers/uuid');
+const app = express();
+const PORT = 3000;
+const dbData = require('./db/db.json');
+const fs = require('fs');
 
-const app = express(); 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Serve static files (index.html, CSS, JS) from the 'public' directory
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('public'));
 
-const PORT = process.env.PORT || 3000; // Use the environment variable for Heroku or port 3000 for local development
 
-app.listen(PORT, () => {
-    console.log('Server listening on port ${PORT}');
+// app.get('/', (req, res) => res.send('Navigate to /send or /routes'));
+
+// app.get('/send', (req, res) =>
+//   res.sendFile(path.join(__dirname, 'public/send.html'))
+// );
+
+// app.get('/paths', (req, res) =>
+//   res.sendFile(path.join(__dirname, 'public/paths.html'))
+// );
+app.get('/notes', (req, res) => 
+
+    res.sendFile(path.join(__dirname, 'public/notes.html'))
+);
+
+app.get('/api/notes', (req, res) =>
+    res.json(dbData)
+);
+app.post('/api/notes', (req, res) => {
+// Log that a POST request was received
+console.info(`${req.method} request received to add a note`)
+    console.log(req.body.title)
+    console.log(req.body.text)
+    const newNote = {
+       title: req.body.title,
+       text: req.body.text,
+       note_id: uuid(),
+      };
+      fs.appendFileSync('./db/db.json', ', ')
+    fs.appendFileSync('./db/db.json', JSON.stringify(newNote))  
 });
+    
 
-// Define a route for serving index.html
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-  });
+app.get('/', (req, res) =>
+    res.sendFile(path.join(__dirname, 'public/index.html'))
+);
 
-  // Define a route for serving notes.html
-app.get('/notes', (req, res) => {
-    res.sendFile(path.join(__dirname, 'notes.html'));
-  });
 
-  const dbPath = path.join(__dirname, 'db.json');
-
-  app.get('/api/notes', (req, res) => {
-    fs.readFile(dbPath, 'utf8', (err, data) => {
-      if (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Error reading notes from the database' });
-      } else {
-        const notes = JSON.parse(data);
-        res.json(notes);
-      }
-    });
-  });
-
-  app.post('/api/notes', (req, res) => {
-    const newNote = req.body;
-    fs.readFile(dbPath, 'utf8', (err, data) => {
-      if (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Error reading notes from the database' });
-      } else {
-        const notes = JSON.parse(data);
-        newNote.id = generateUniqueId(); // You need to implement a function to generate a unique ID
-        notes.push(newNote);
-  
-        fs.writeFile(dbPath, JSON.stringify(notes), (err) => {
-          if (err) {
-            console.error(err);
-            res.status(500).json({ error: 'Error saving the note to the database' });
-          } else {
-            res.json(newNote);
-          }
-        });
-      }
-    });
-  });
-
-  app.delete('/api/notes/:id', (req, res) => {
-    const noteId = req.params.id;
-    fs.readFile(dbPath, 'utf8', (err, data) => {
-      if (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Error reading notes from the database' });
-      } else {
-        const notes = JSON.parse(data);
-        const filteredNotes = notes.filter((note) => note.id !== noteId);
-  
-        fs.writeFile(dbPath, JSON.stringify(filteredNotes), (err) => {
-          if (err) {
-            console.error(err);
-            res.status(500).json({ error: 'Error deleting the note from the database' });
-          } else {
-            res.json({ message: 'Note deleted successfully' });
-          }
-        });
-      }
-    });
-  });
+app.listen(PORT, () =>
+  console.log(`Example app listening at http://localhost:${PORT}`)
+);
