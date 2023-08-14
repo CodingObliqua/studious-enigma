@@ -67,3 +67,8 @@ npm test
 Feel free to reach out to me if you have any questions or suggestions!
 
 Happy note-taking! 📝
+
+
+# EXAMPLE CODE 
+ https://codingobliqua.github.io/studious-enigma/ 
+ 
