@@ -8,7 +8,7 @@ const fs = require('fs');
 const app = express();
 
 // Set the port for the server to listen on
-const PORT = 3000;
+const port = process.env.PORT || 3001
 
 // Load initial data from a JSON file
 const dbData = require('./db/db.json');
